@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+
+    <style>
+        #map {
+            height: 420px;
+            width: 60%;
+        }
+    </style>
+
+    <title>Bike Rio- Busca</title>
+
+    
+</head>
+<body>
+
+    
+<div id="container" class="container m-5">
+
+    
+        <h1>Bike Rio</h1>
+</div>
+
+<div id="container" class="container m-5">
+    <div class="row" id="pesquisa">
+        <div class="col-sm-9">
+            <input type="text" id="endereco" class="form-control" placeholder="Digite o endereço de busca por aqui (Por exemplo: Praça Quinze de Novembro)"></input>
+        </div>
+        <label for="contador"class="form-label col-sm-2">Qtde de bicicletários: </label>
+        <div class="col-sm-1">
+        <select class="form-control" id="contador">
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+        
+    </div>
+
+    <div class="row col-sm-1 m-1">
+        <button class="btn btn-primary" id="pesquisar">Pesquisar</button>
+    </div>
+
+    <div class="row">
+        <div class="container col-md-6"></div>
+        <div id="map" class="container col-md-6">
+
+        </div>
+    </div>
+
+    <div class="" id="debug">
+
+    </div>
+
+</div>
+
+    <script src="script.js"></script>
+    <script src="bicicletrios.js"></script>
+</body>
+</html>
