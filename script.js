@@ -1,4 +1,8 @@
+
+
+
 //Inicializa as variáveis "globais"
+
 var map;
 
 lat_padrao = -22.903733;
@@ -7,6 +11,15 @@ long_padrao = -43.192711;
 
 latitude = lat_padrao;
 longitude = long_padrao;
+
+var debug = document.getElementById("debug");
+
+var dadosJSON = []
+var pi = Math.PI;
+
+//transforma o JSON do arquivo "bicicletários.js" em objeto
+//var json = JSON.parse(geojson);
+
 
 
 // Armazena o endereço digitado em uma variável
@@ -35,10 +48,11 @@ function obterCoordenadas(){
                 contador = document.getElementById("contador").value;
                 debug.innerHTML = contador;   
                 mostraMapa(latitude, longitude);
+                setaDistanciaArray(latitude, longitude);
                 addMarcador(latitude, longitude, contador, nome_da_rua);
                 console.log(latitude, longitude);
                 //addMarcador(latitude, longitude, contador);
-                //L.geoJSON(geojson).addTo(map);
+                L.geoJSON(geojson).addTo(map);
 
 
             } else {
@@ -55,7 +69,7 @@ function obterCoordenadas(){
 
 
 
-    
+//----------------------------------------------------------------------------------------------------------    
 // Função que adiciona os marcadores no mapa
 
 function addMarcador(lat, long, cont, nome_da_rua){
@@ -79,6 +93,7 @@ function addMarcador(lat, long, cont, nome_da_rua){
     }
 }
 
+//DESABILITADO
 //----------------------------------------------------------------------------------------------------------
 
 function lerContador(){
@@ -127,6 +142,8 @@ function mostraMapa(latitude, longitude){
 
 }
 
+
+
     addMarcador(latitude, longitude);
     console.log(addMarcador(latitude, longitude));
 
@@ -148,6 +165,56 @@ function mostraMapa(latitude, longitude){
 //----------------------------------------------------------------------------------------------------------
 // Carrega o mapa inicial com as coordenadas padrão (Central do Brasil)
     mostraMapa(lat_padrao, long_padrao);
+    setaDistanciaArray(lat_padrao, long_padrao);
+
+
+
+// Mapeia o JSON para para calcular as distâncias
+function calculaDistancia(lat1, long1, lat2, long2){
+
+    const raioTerra = 6371;
+
+// Fórmula do Triangulo Pitagórico
+    const distanciaEmGraus = Math.sqrt(((lat2 - lat1)**2)+((long2 - long1)**2));  
+
+    const voltaTerra = (2 * Math.PI * raioTerra);
+
+    const distancia = distanciaEmGraus * voltaTerra / 360;
+
+    return distancia;
+
+}
+
+//varre o array pegando as coordenadas de cada pondo BikeRio e coloca em outro array...
+//já criando mais uma coluna com a distância calculada entre cada ponto e o endereço pesquisado. 
+function setaDistanciaArray(latPrincipal, longPrincipal){
+
+    latPrin = latPrincipal;
+    longPrin = longPrincipal;
+
+    geojson.features.forEach(function(feature) {
+        var dados = {
+          
+          Nome: feature.properties.Nome,
+          Latitude: feature.geometry.coordinates[1],
+          Longitude: feature.geometry.coordinates[0],
+          Distancia: calculaDistancia(latPrin, longPrin, feature.geometry.coordinates[1], feature.geometry.coordinates[0])
+          
+        };
+        dadosJSON.push(dados);
+      });
+
+      dadosJSON.sort(function(a, b) {
+        return a.Distancia - b.Distancia;
+      });
+
+        console.log(dadosJSON);
+
+
+
+}
+
+
 
     
 
