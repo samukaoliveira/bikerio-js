@@ -13,6 +13,7 @@ latitude = lat_padrao;
 longitude = long_padrao;
 
 var debug = document.getElementById("debug");
+var statusBusca = document.getElementById("status");
 
 var dadosJSON = []
 var pi = Math.PI;
@@ -48,15 +49,29 @@ function obterCoordenadas(){
                 contador = document.getElementById("contador").value;
                 debug.innerHTML = contador;   
                 mostraMapa(latitude, longitude);
-                setaDistanciaArray(latitude, longitude);
-                addMarcador(latitude, longitude, contador, nome_da_rua);
-                console.log(latitude, longitude);
-                //addMarcador(latitude, longitude, contador);
-                L.geoJSON(geojson).addTo(map);
+                bikeProximos = setaDistanciaArray(latitude, longitude);
 
+                //adiciona o marcador da localização pesquisada
+                addMarcador(latitude, longitude, nome_da_rua, "blue");
+
+                //Faz iteração para marcar os primeiros pontos de bike mais próximos de acordo com a quantidade da variável contador
+
+                for(let i=0; i < contador; i++){
+                    addMarcador(bikeProximos[i].Latitude, bikeProximos[i].Longitude, bikeProximos[i].Nome, "green");
+                }
+
+                console.log(latitude, longitude, bikeProximos);
+
+                //addMarcador(latitude, longitude, contador);
+                //L.geoJSON(geojson).addTo(map);
+
+                statusBusca.setAttribute('class', 'text-success');
+                statusBusca.innerHTML = `Veja os ${contador} endereços mais próximos encontrados`;
 
             } else {
                 console.error('Erro na requisição!' + endereco);
+                statusBusca.classList.add("text-danger");
+                statusBusca.innerHTML = "Endereço não encontrado";
                 console.error(endereco);
                 reject(errorMessage)
             }
@@ -72,43 +87,49 @@ function obterCoordenadas(){
 //----------------------------------------------------------------------------------------------------------    
 // Função que adiciona os marcadores no mapa
 
-function addMarcador(lat, long, cont, nome_da_rua){
+function addMarcador(lat, long, nome_da_rua, cor){
 
     //let cont = lerContador();
     let latMarcador = lat;
     let longMarcador = long;
     let nomeMarcador = nome_da_rua;
+    let corIcone = cor
+
+    var colorIcon = new L.Icon({
+        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${corIcone}.png`,
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
     
-    
 
-    while (cont > 0) {
-
-
-    L.marker([latMarcador, longMarcador]).addTo(map)
+    L.marker([latMarcador, longMarcador], {
+        icon: colorIcon
+    }).addTo(map)
         .bindPopup(nomeMarcador)
         .openPopup();
 
     
-        cont--;
-    }
 }
 
 //DESABILITADO
 //----------------------------------------------------------------------------------------------------------
 
-function lerContador(){
-        obterCoordenadas();
-        var select = document.getElementById("contador");
-        var contador = 0;
-        var debug = document.getElementById("debug");
+// function lerContador(){
+//         obterCoordenadas();
+//         var select = document.getElementById("contador");
+//         var contador = 0;
+//         var debug = document.getElementById("debug");
 
-        select.addEventListener('change', function(){
-            contador = parseInt(this.value);
-            debug.innerHTML("debug") = contador;   
-        });
+//         select.addEventListener('change', function(){
+//             contador = parseInt(this.value);
+//             debug.innerHTML("debug") = contador;   
+//         });
 
-        return contador;
-}
+//         return contador;
+// }
 
 
 //----------------------------------------------------------------------------------------------------------
@@ -144,8 +165,8 @@ function mostraMapa(latitude, longitude){
 
 
 
-    addMarcador(latitude, longitude);
-    console.log(addMarcador(latitude, longitude));
+    //addMarcador(latitude, longitude);
+    //console.log(addMarcador(latitude, longitude));
 
 
     var select = document.getElementById("contador");
@@ -165,7 +186,7 @@ function mostraMapa(latitude, longitude){
 //----------------------------------------------------------------------------------------------------------
 // Carrega o mapa inicial com as coordenadas padrão (Central do Brasil)
     mostraMapa(lat_padrao, long_padrao);
-    setaDistanciaArray(lat_padrao, long_padrao);
+    //setaDistanciaArray(lat_padrao, long_padrao);
 
 
 
@@ -189,6 +210,11 @@ function calculaDistancia(lat1, long1, lat2, long2){
 //já criando mais uma coluna com a distância calculada entre cada ponto e o endereço pesquisado. 
 function setaDistanciaArray(latPrincipal, longPrincipal){
 
+    //Zera o array das coordenadas mais próximas para começar novo cálculo
+    dadosJSON.length = 0
+
+    //seta as coordenadas principais passadas por parâmetro no eventListener
+
     latPrin = latPrincipal;
     longPrin = longPrincipal;
 
@@ -210,7 +236,7 @@ function setaDistanciaArray(latPrincipal, longPrincipal){
 
         console.log(dadosJSON);
 
-
+      return dadosJSON;
 
 }
 
